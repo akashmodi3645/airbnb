@@ -1,0 +1,127 @@
+/* Global font setup */
+body {
+  font-family: "Plus Jakarta Sans", sans-serif !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100vh !important;
+}
+.container{
+    flex : 1;
+}
+
+/* Form spacing fix */
+form .form-label {
+  margin-bottom: 3px !important; /* label ke niche kam space */
+  font-weight: 500; /* Medium look */
+}
+
+form .form-control {
+  border-radius: 8px; /* rounded clean input */
+  padding: 10px 12px;
+  font-size: 15px;
+}
+.create-heading {
+  font-weight: 600;
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 5px;
+  margin-top: 15px;
+}
+
+
+/* Slight shadow and modern look */
+.container form {
+  max-width: 700px;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  padding: 30px 40px;
+  margin: 40px auto;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Button styling */
+.btn-primary {
+  background-color: #ff385c !important;
+  border: none !important;
+}
+ 
+
+.btn-primary:hover {
+  background-color: #e03150;
+}
+
+.navbar{
+    height: 5rem;
+    background-color: white;
+}
+
+.fa-compass{
+    color: #fe424d;
+    font-size: 2rem;
+
+}
+
+.nav-link{
+    color: #222222 !important;
+}
+
+.f-info-links a{
+    text-decoration: none;
+    color: #222222;
+}
+.f-info-links a:hover{
+   text-decoration: underline;
+}
+.f-info-links, .f-info-socials, .f-info-brand{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.f-info-socials i{
+    margin-right: 1rem;
+    font-size: 1.2rem;
+}
+.f-info{
+    text-align: center;
+    height: 8rem;
+    background-color: #ebebeb;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: space-evenly;
+}
+
+.listening-card{
+    border: none !important;
+    margin-bottom: 2rem;
+}
+.card-img-top{
+    border-radius: 1rem !important;
+    width: 100% !important;
+    object-fit: cover !important;
+}
+.card-body{
+    padding: 0!important;
+    
+}
+.card-text p{
+    font-weight: 400;
+}
+.listing-link{
+    text-decoration: none;
+}
+.card :hover{
+    opacity: 0.7;
+}
+.show-img{
+  height: 30vh !important;
+  width: 100% !important;
+}
+.btns{
+  display: flex;
+}
+.edit-btn{
+  background-color: #fe424d !important;
+}

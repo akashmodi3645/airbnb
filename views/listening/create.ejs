@@ -1,0 +1,46 @@
+<%  layout("/layout/boilerplate.ejs") %>
+<div class="container">
+  <h3 class="mb-4 fw-semibold create-heading">Create a New Listing</h3>
+
+  <form action="/listening" method="POST" novalidate class="needs-validation">
+    <div class="mb-2">
+      <label for="title" class="form-label" >Title</label>
+      <input required type="text" class="form-control" id="title" name="listens[title]" placeholder="enter a catchy title">
+    <div class="invalid-feedback">please enter a tittle</div>
+    </div>
+
+    <div class="mb-2">
+      <label for="description" class="form-label">Description</label>
+      <textarea required class="form-control" id="description" name="listens[description]" rows="2" placeholder="enter description"></textarea>
+    <div class="invalid-feedback">please enter a short desription</div>
+    </div>
+
+    <div class="mb-2">
+      <label for="image" class="form-label">Image Link</label>
+      <input  type="text" class="form-control" id="image" name="listens[image]" placeholder="enter image URL/Link">
+    
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-2">
+        <label for="price" class="form-label">Price</label>
+        <input required  class="form-control" id="price" name="listens[price]" placeholder="2000">
+      <div class="invalid-feedback">please enter a valid price</div>
+      </div>
+      <div class="col-md-6 mb-2">
+        <label for="country" class="form-label">Country</label>
+        <input required type="text" class="form-control" id="country" name="listens[country]" placeholder="india">
+      <div class="invalid-feedback">please enter e country name</div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="location" class="form-label">Location</label>
+      <input required type="text" class="form-control" id="location" name="listens[location]" placeholder="enter location">
+    <div class="invalid-feedback">please enter a location</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary px-4 add-btn">Add</button>
+  </form>
+</div>
+
