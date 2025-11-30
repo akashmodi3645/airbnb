@@ -9,6 +9,7 @@ const path = require("path")
   const listeningRouter = require("./routes/listening.js")
   const reviewsRouter = require("./routes/review.js")
   const session = require("express-session")
+  const MongoStore = require('connect-mongo');
   const flash = require("connect-flash")
   const passport = require("passport")
   const LocalStrategy = require("passport-local")
@@ -22,8 +23,26 @@ app.use(express.json())
 app.use(methodOverride('_method'))
 app.engine("ejs", ejsMate)
 app.use(express.static(path.join(__dirname,"public")))
+   
 
+
+
+const dbUrl = process.env.ATLASDB_URL
+main().then(res=>{
+    console.log("connect succsfully")
+}).catch(err=>{
+    console.log(err)
+})
+async function main(){
+    await mongoose.connect(dbUrl)
+}
+ const store =  MongoStore.create({
+    mongoUrl:dbUrl,
+    secret: "mysecretcode",
+    touchAfter: 24 * 3600
+   })
  const sessionOption = {
+    store,
     secret : "mysecretcode",
     resave : false,
   saveUninitialized: true,
@@ -33,24 +52,14 @@ app.use(express.static(path.join(__dirname,"public")))
     httpOnly : true
   }
   }
+  store.on("error",(err)=>{
+    console.log("error in mongo session store",err)
+  })
 
+//  app.get("/",(req,res)=>{
+//     res.send("hiii")
 
-
-
-main().then(res=>{
-    console.log("connect succsfully")
-}).catch(err=>{
-    console.log(err)
-})
-async function main(){
-    await mongoose.connect("mongodb://127.0.0.1:27017/airbnb")
-}
- 
-
- app.get("/",(req,res)=>{
-    res.send("hiii")
-
- })
+//  })
  app.use(session(sessionOption))
  app.use(flash())
  app.use(passport.initialize());
@@ -91,6 +100,7 @@ app.use((err,req,res,next)=>{
     let {status = 500 , message}  = err;
     res.status(status).render("error.ejs",{err})
 })
+
 
 const port = 3000;
 app.listen(port,(req,res)=>{

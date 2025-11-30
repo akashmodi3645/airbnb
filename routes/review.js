@@ -5,6 +5,8 @@ const router = express.Router({mergeParams : true})
  const expressError = require("../utils/expressError.js")
  const listen = require("../models/listening.js")
   const review  = require("../models/review.js")
+const { isLoggedIn ,isreviewAuthor } = require("../middelware.js")
+const reviewController = require("../controllers/reviews.js")
 
  
  
@@ -19,24 +21,8 @@ const router = express.Router({mergeParams : true})
     }
  }
 
-router.post("/", validatereview , wrapAsync( async (req,res)=>{
-      let liss =   await listen.findById(req.params.id)
-      
-      let newrev = new review( req.body.review)
-      liss.reviews.push(newrev)
-      await newrev.save()
-      await liss.save()
-req.flash("success", "new review created")
-      res.redirect(`/listening/${liss.id}`)
-}))
+router.post("/", isLoggedIn, validatereview , wrapAsync( reviewController.createReview))
 
-router.delete("/:reviewid", wrapAsync(async(req,res)=>{
-    let {id , reviewid}  = req.params
-    await listen.findByIdAndUpdate(id , {$pull : {reviews : reviewid}})
-    await review.findByIdAndDelete(reviewid)
-    req.flash("success", " review deleted succesfully")
-    res.redirect( `/listening/${id}`)
-
-}))
+router.delete("/:reviewid",isLoggedIn,isreviewAuthor, wrapAsync(reviewController.deletRoute))
 
 module.exports = router

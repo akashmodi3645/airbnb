@@ -125,3 +125,6 @@ form .form-control {
 .edit-btn{
   background-color: #fe424d !important;
 }
+
+
+#map {height: 400px; width: 80vh; }

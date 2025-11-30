@@ -2,7 +2,7 @@
 <div class="container">
   <h3 class="mb-4 fw-semibold create-heading">Create a New Listing</h3>
 
-  <form action="/listening" method="POST" novalidate class="needs-validation">
+  <form action="/listening" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
     <div class="mb-2">
       <label for="title" class="form-label" >Title</label>
       <input required type="text" class="form-control" id="title" name="listens[title]" placeholder="enter a catchy title">
@@ -16,8 +16,8 @@
     </div>
 
     <div class="mb-2">
-      <label for="image" class="form-label">Image Link</label>
-      <input  type="text" class="form-control" id="image" name="listens[image]" placeholder="enter image URL/Link">
+      <label for="image" class="form-label">upload image</label>
+      <input  type="file" class="form-control" id="image" name="listens[image][url]" required >
     
     </div>
 

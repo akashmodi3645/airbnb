@@ -13,6 +13,7 @@ const listen  = require("../models/listening.js")
 
  const initdb = async()=>{
    await listen.deleteMany({}).then(res=>{console.log("deleted")})
+   initdata.data =  initdata.data.map((obj)=>({...obj , owner : "69256121cc44ec32925da6f8"}))
    await listen.insertMany(initdata.data)
    console.log("saved")
  }

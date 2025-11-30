@@ -2,7 +2,7 @@
 <div class="container">
   <h3 class="mb-4 fw-semibold create-heading">Edit your list</h3>
 
-  <form action="/listening/<%=data.id%>?_method=put" method="POST" class="needs-validation" novalidate>
+  <form action="/listening/<%=data.id%>?_method=put" method="POST" class="needs-validation" novalidate  enctype="multipart/form-data">
 
     <div class="mb-2">
       <label for="title" class="form-label">Title</label>
@@ -15,11 +15,15 @@
       <textarea required class="form-control" id="description" name="listens[description]" rows="2"><%=data.description%></textarea>
     <div class="invalid-feedback">please enter a short desription</div>
     </div>
+<div class="mb-2">
+  Original Listing Image <br>
+  <img style="width: 250px;  height: 150px;" src="<%= data.image.url%>" alt="">
+</div>
 
     <div class="mb-2">
-      <label for="image" class="form-label">Image Link</label>
-      <input required type="text" class="form-control" id="image" name="listens[image]" value="<%=data.image.url%>">
-   <div class="invalid-feedback">please enter a valid image url</div>
+      <label for="image" class="form-label"> upload new Image </label>
+      <input  type="file" class="form-control" id="image" name="listens[image][url]" >
+   
     </div>
 
     <div class="row">

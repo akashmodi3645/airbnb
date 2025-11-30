@@ -1,10 +1,19 @@
+
+if(process.env.NODE_ENV != "production"){
+    require("dotenv").config();
+}
+
 const express = require("express")
 const router = express.Router({mergeParams : true})
  const {listeningSchema } = require("../schema.js")
  const wrapAsync = require("../utils/wrapAsync.js")
  const expressError = require("../utils/expressError.js")
  const listen = require("../models/listening.js")
- const {isLoggedIn} = require("../middelware.js")
+ const {isLoggedIn , isOwner} = require("../middelware.js")
+ const listeningController = require("../controllers/listening.js")
+ const multer  = require('multer')
+ const {storage} = require("../cloudConflig.js")
+const upload = multer( {storage})
 
 
 
@@ -18,80 +27,18 @@ const validatelistening = (req,res,next)=>{
     next()
    }
 }
-
-router.get("/", wrapAsync(async(req,res)=>{
-    let alllisten = await listen.find();
-    res.render("listening/listen.ejs",{alllisten})
-}))
-
-router.get("/new", isLoggedIn,(req,res)=>{
-   
-    res.render("listening/create.ejs")
-})
-router.get("/:id", wrapAsync(async(req,res)=>{
-    let {id} = req.params;
-    const listendata =  await listen.findById(id).populate("reviews")
-    if(!listendata){
-         req.flash("error", "listening you requested for does not exit ")
-         res.redirect("/listening")
-    }else{
-        res.render("listening/show.ejs",{listendata})
-    }
-   
-    
-}))
+router.route("/")
+.get( wrapAsync(listeningController.index))
+.post( isLoggedIn,upload.single('listens[image][url]'), validatelistening,  wrapAsync(listeningController.createnewListing))
 
 
-router.post("/", isLoggedIn, validatelistening,  wrapAsync(async(req,res)=>{
-    
-  
-     let listens =  new listen(req.body.listens)
-     await listens.save()
-     req.flash("success", "new listening created")
-    // console.log(listening)
-    res.redirect("/listening")
-        
-    
-   
-}))
-router.get("/:id/edit", isLoggedIn, wrapAsync(async(req,res)=>{
-    let {id} = req.params;
-    let data = await listen.findById(id)
-     if(!data){
-         req.flash("error", "listening you requested for does not exit ")
-         res.redirect("/listening")
-    }else{
-res.render("listening/edit.ejs",{data})
-    }
-    
-    // console.log(data)
-}))
+router.get("/new", isLoggedIn, listeningController.renderNewForm)
+
+router.route("/:id").get( wrapAsync(listeningController.showListening)).put( isLoggedIn,isOwner,upload.single('listens[image][url]'), validatelistening , wrapAsync(listeningController.editListening)).delete(isLoggedIn, wrapAsync(listeningController.deleteListening));
+
+
+
+router.get("/:id/edit", isLoggedIn, wrapAsync(listeningController.renderEditForm))
 //edit route
-
-router.put("/:id", isLoggedIn, validatelistening , wrapAsync(async(req,res)=>{
-   
-    let {id} = req.params;
-
-      
- await listen.findByIdAndUpdate(id,{...req.body.listens})
- req.flash("success", " listening edit")
- res.redirect(`/listening/${id}`)
-
-
-}))
-router.delete("/:id",isLoggedIn, wrapAsync(async (req, res) => {
-    const { id } = req.params;
-
-    console.log("ID:", id);
-
-    const deleteddata = await listen.findByIdAndDelete(id)
-
-    console.log("DELETED:", deleteddata);
-
-    req.flash("success", "Listening deleted successfully");
-
-    return res.redirect("/listening");
-}));
-
 
 module.exports = router
