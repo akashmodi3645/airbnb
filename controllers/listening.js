@@ -1,4 +1,5 @@
-
+const express = require("express")
+const app = express()
 const listen = require("../models/listening.js")
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const mapToken = process.env.MAP_TOKEN
@@ -91,3 +92,35 @@ module.exports.deleteListening = async (req, res) => {
 
     return res.redirect("/listening");
 }
+module.exports.index = async (req, res) => {
+  try {
+    const { location } = req.query;        // ?location=shimla
+    let filter = {};
+
+    if (location && location.trim() !== "") {
+      const loc = location.trim();
+
+      // agar schema me "location" field hai:
+      filter.location = { $regex: loc, $options: "i" };
+
+      // agar tum city/country alag fields rakhte ho to yeh use karo:
+      /*
+      filter = {
+        $or: [
+          { city:    { $regex: loc, $options: "i" } },
+          { country: { $regex: loc, $options: "i" } },
+        ],
+      };
+      */
+    }
+
+    const alllisten = await listen.find(filter);
+    res.render("listening/listen.ejs", { alllisten, location });
+  } catch (err) {
+    console.log(err);
+    req.flash("error", "Unable to load listings");
+    res.redirect("/");
+  }
+};
+
+

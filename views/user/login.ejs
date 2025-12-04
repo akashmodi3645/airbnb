@@ -1,26 +1,74 @@
-<%  layout("/layout/boilerplate.ejs") %>
+<% layout("/layout/boilerplate.ejs") %>
 
-        <div class="mt-3 row">
-            <h1 class="col-6 offset-3">login</h1>
-            <div class="col-6 offset-3">
-                <form action="/login" method="post" class="needs-validation" novalidate>
-                   <div class="mb-3">
-                    <label for="username" class="form-label">username</label>
-                    <input type="text" id="username" name="username" class="form-control" required>
-                   </div>
-                  
+<style>
+  .auth-page {
+    min-height: calc(100vh - 80px); /* adjust if your navbar/footer height is different [web:2] */
+    display: flex;
+    justify-content: center;  /* horizontal center [web:2] */
+    align-items: center;      /* vertical center [web:8] */
+  }
 
-                
-                    <div class="mb-3">
-                    <label for="password" class="form-label">password</label>
-                    <input type="password" id="password" name="password" class="form-control" required>
-                   </div>
+  .auth-card {
+    max-width: 420px;
+    width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(15,23,42,0.08);
+    border: 1px solid #e5e7eb;  /* light gray border [web:5] */
+  }
 
-                   <button class="btn btn-primary">login</button>
-                   <button class="btn btn-primary">login with facebook</button>
-                   
-                   
-  </form>
+  .auth-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 576px) {
+    .auth-card {
+      box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+    }
+  }
+</style>
+
+<div class="auth-page">
+  <div class="card auth-card">
+    <div class="card-body">
+      <h1 class="auth-title">Login</h1>
+
+      <form action="/login" method="post" class="needs-validation" novalidate>
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            class="form-control"
+            required
+            autocomplete="username"
+          >
+          <div class="invalid-feedback">Please enter your username.</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-control"
+            required
+            autocomplete="current-password"
+          >
+          <div class="invalid-feedback">Please enter your password.</div>
+        </div>
+
+        <button class="btn btn-primary w-100 mt-2" type="submit">Login</button>
+      </form>
+
+      <p class="text-center small text-muted mt-3 mb-0">
+        Don’t have an account?
+        <a href="/signup" class="text-decoration-none">Sign up</a>
+      </p>
+    </div>
+  </div>
 </div>
-</div>
-   

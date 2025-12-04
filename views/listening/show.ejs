@@ -1,102 +1,204 @@
 <%  layout("/layout/boilerplate.ejs") %>
+
 <script>
-  const mapToken =  "<%= process.env.MAP_TOKEN %>"
-  const listing = <%- JSON.stringify(listendata) %>
+  const mapToken = "<%= process.env.MAP_TOKEN %>";
+  const listing = <%- JSON.stringify(listendata) %>;
 </script>
 
-<div class="row mt-4">
-  <div class="col-8 offset-3">
-    <h3><%=listendata.title%></h3>
-</div>
- <div class="card listening-card col-6 offset-3" >
-  <img src="<%=listendata.image.url%>" class="card-img-top show-img" alt="listen-image">
-  <div class="card-body">
-    <div class="card-text"><p> owned by :<i> <%=listendata.owner.username%> </i></p>
-     <p> <%=listendata.description%></p>
-     <p><%=listendata.price.toLocaleString('en-IN')%></p> 
-     <p> <%=listendata.location%></p>
-     <p> <%=listendata.country%></p>
+<style>
+  .show-img{
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+    border-radius: 16px;
+    margin-bottom: 1rem;
+  }
 
+  form {
+    display: inline-block;
+  }
 
-</div>
-    
-  </div>
-</div>
-  
-    <%if(currUser  && listendata.owner._id.equals(currUser._id)){%>
-   <div class="btns">
-     <a href="/listening/<%=listendata._id%>/edit" class="btn btn-dark col-1 offset-3 edit-btn"> edit</a>
-     <form action="/listening/<%=listendata._id%>?_method=delete" method="post">
-            <button class="btn btn-dark offset-5"> delete</button>
-        </form>
-   </div>
+  .host-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #4f46e5;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 18px;
+  }
 
-   </div>
-    <%}%>
-  <div class="col-8 offset-3 mb-3">
-   
-    <%if(currUser){%>
-       <hr>
-    <h3>Leave a Review </h3>
-    <form action="/listening/<%=listendata._id%>/review" method="post" novalidate class="needs-validation">
-    
-      <div class="mb-2 mt-3">
-        <label class="form-label" for="rating">Rating</label>
-      <fieldset class="starability-slot">
-  <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
-  <input type="radio" id="first-rate1" name="review[rating]" value="1" />
-  <label for="first-rate1" title="Terrible">1 star</label>
-  <input type="radio" id="first-rate2" name="review[rating]" value="2" />
-  <label for="first-rate2" title="Not good">2 stars</label>
-  <input type="radio" id="first-rate3" name="review[rating]" value="3" />
-  <label for="first-rate3" title="Average">3 stars</label>
-  <input type="radio" id="first-rate4" name="review[rating]" value="4" />
-  <label for="first-rate4" title="Very good">4 stars</label>
-  <input type="radio" id="first-rate5" name="review[rating]" value="5" />
-  <label for="first-rate5" title="Amazing">5 stars</label>
-</fieldset>
-</div>
-      <div class="mb-3 mt-2">
-        <label class="form-label" for="comment">Comments</label>
-        <textarea class="form-control" name="review[comment]" id="comment" cols="30" rows="5" required></textarea>
-<div class="invalid-feedback">please add some comments for review</div>      
-      </div>
-      <button class="btn btn-outline-dark">submit</button>
-     
-    </form>
-    <%}%>
-    <hr>
-    <% if(listendata.reviews.length >0){%>
-    <div class="row">
-      <p><b>All Reviews</b></p>
-      <% for(review of listendata.reviews){%>
- <div class="card col-5 mb-3 ms-3">
-        <div class="card-body">
-        <div class="card-title"><b>@<%=review.author.username%></b></div>
-           <p class="starability-result card-text" data-rating="<%=review.rating%>">
-    Rated: 3 stars
-  </p>
-        <div class="card-text"><%=review.comment%></div>
+  #map{
+    width: 100%;
+    height: 320px;
+    border-radius: 12px;
+  }
+
+  .listing-card-body{
+    padding: 1.75rem 1.75rem 1.5rem;
+  }
+
+  .section-divider{
+    margin: 1.5rem 0;
+  }
+  .btn-dlt{
+    background-color: red;
+  }
+
+  @media (max-width: 768px){
+    .show-img{ height: 280px; }
+    #map{ height: 260px; }
+    .listing-card-body{
+      padding: 1.25rem;
+    }
+  }
+</style>
+
+<div class=" mt-4">
+
+  <!-- MAIN LISTING CARD -->
+  <div class="">
+    <div class="card listening-card">
+
+      <!-- IMAGE -->
+      <img src="<%=listendata.image.url%>" class="card-img-top show-img" alt="listen-image">
+
+      <!-- CONTENT -->
+      <div class="card-body listing-card-body">
+
+        <!-- title + location -->
+        <h3 class="mb-1"><b><%=listendata.title%></b></h3>
+        <p class="text-muted mb-3">
+          <%=listendata.location%>, <%=listendata.country%>
+        </p>
+
+        <!-- host + price -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-2">
+
+          <!-- host avatar + text -->
+          <div class="d-flex align-items-center gap-3 mb-2 mb-md-0">
+            <div class="host-avatar">
+              <span><%= listendata.owner.username[0].toUpperCase() %></span>
+            </div>
+            <p class="mb-0 fw-semibold">
+              Hosted by <span class="text-capitalize"><%= listendata.owner.username %></span>
+            </p>
+          </div>
+
+          <!-- price -->
+          <div class="text-start text-md-end">
+            <p class="mb-1 h5">
+              ₹ <%=listendata.price.toLocaleString('en-IN')%>
+              <span class="text-muted fs-6"> / night</span>
+            </p>
+          </div>
+        </div>
+
        
-        </div>
-        <div class="mt-3">
-          <form action="/listening/<%=listendata._id%>/review/<%=review._id%>?_method=delete" class="mb-3" method="post" >
-          <button class="btn btn-sm btn-dark">delete</button>
-        </form> 
-        </div>
-        
+
       </div>
-     <% }%>
-     
-    </div>
-    <%}%>
-    <div class="col-4 mb-3">
-      <h1>Where you’ll be</h1>
-      <div  id="map"></div>
-    </div>
-   <script src="/js/map.js"></script>
+       
+      
+   
+  </div>
+   </div>
+    <!-- EDIT / DELETE – sirf normal buttons -->
+        <% if(currUser && listendata.owner._id.equals(currUser._id)){ %>
+          <div class="mb-3">
+            <a href="/listening/<%=listendata._id%>/edit"
+               class="btn btn-outline-dark btn-sm me-2">Edit</a>
+               <form action="/listening/<%=listendata._id%>?_method=delete"
+                  method="post" >
+              <button class="btn btn-outline-dark btn-sm btn-dlt " type="submit">Delete</button>
+            </form>
+          </div>
+        <% } %>
+
+        <!-- ABOUT SECTION -->
+        <hr class="section-divider">
+        <h5 class="mb-2">About this place</h5>
+        <p class="mb-3"><%=listendata.description%></p>
+
+        <!-- MAP FULL WIDTH INSIDE CARD -->
+        <hr class="section-divider">
+        <h5 class="mb-2">Where you’ll be</h5>
+        <div id="map" class="mb-2"></div>
+
+  <!-- REVIEWS AREA -->
+  <div >
+
+    <!-- LEAVE REVIEW (full width) -->
+    <% if(currUser){ %>
+      <hr class="section-divider">
+      <h3 class="mb-3">Leave a Review</h3>
+      <form action="/listening/<%=listendata._id%>/review" method="post"
+            novalidate class="needs-validation mb-4 w-100">
+
+        <div class="mb-3 mt-2">
+          <label class="form-label" for="rating">Rating</label>
+          <fieldset class="starability-slot">
+            <input type="radio" id="no-rate" class="input-no-rate"
+                   name="review[rating]" value="1" checked aria-label="No rating." />
+            <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+            <label for="first-rate1" title="Terrible">1 star</label>
+            <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+            <label for="first-rate2" title="Not good">2 stars</label>
+            <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+            <label for="first-rate3" title="Average">3 stars</label>
+            <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+            <label for="first-rate4" title="Very good">4 stars</label>
+            <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+            <label for="first-rate5" title="Amazing">5 stars</label>
+          </fieldset>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="comment">Comments</label>
+          <textarea class="form-control" name="review[comment]" id="comment"
+                    rows="5" required></textarea>
+          <div class="invalid-feedback">please add some comments for review</div>
+        </div>
+
+        <button class="btn btn-dark w-100 w-md-auto ">Submit</button>
+      </form>
+    <% } %>
+
+  
+    <hr class="section-divider">
+    <% if(listendata.reviews.length > 0){ %>
+      <h3 class="mb-3">All Reviews</h3>
+
+      <div class="row g-2">
+        <% for(review of listendata.reviews){ %>
+          <div class="col-12">
+            <div class="mb-2">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="fw-semibold small">@<%=review.author.username%></span>
+                <p class="starability-result small mb-0"
+                   data-rating="<%=review.rating%>"></p>
+              </div>
+
+              <p class="small mb-2"><%=review.comment%></p>
+
+              <% if(currUser && review.author._id.equals(currUser._id)){ %>
+                <form action="/listening/<%=listendata._id%>/review/<%=review._id%>?_method=delete"
+                      class="mb-0" method="post">
+                  <button class="btn btn-outline-dark btn-sm">Delete Review</button>
+                </form>
+              <% } %>
+            </div>
+
+            <hr class="my-2">
+          </div>
+        <% } %>
+      </div>
+    <% } %>
 
   </div>
-     
-    
 
+</div>
+
+<script src="/js/map.js"></script>

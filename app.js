@@ -28,13 +28,17 @@ app.use(express.static(path.join(__dirname,"public")))
 
 
 const dbUrl = process.env.ATLASDB_URL
+console.log(dbUrl)
 main().then(res=>{
     console.log("connect succsfully")
 }).catch(err=>{
     console.log(err)
 })
 async function main(){
-    await mongoose.connect(dbUrl)
+    await mongoose.connect(dbUrl ,{
+    autoSelectFamily: false,     // important for Atlas TLS issue
+    serverSelectionTimeoutMS: 30000,
+  })
 }
  const store =  MongoStore.create({
     mongoUrl:dbUrl,
@@ -75,16 +79,6 @@ passport.deserializeUser(User.deserializeUser());
     next();
  })
 
-//  app.get("/register",  async(req,res)=>{
-//     let fakeuser = new User({
-//         email : "akashmodi",
-//         username : "akash modi"
-
-//     })
-//          let registereduser =  await User.register(fakeuser , "hello")
-//          console.log(registereduser)
-//          res.send(registereduser)
-//  })
 
 
  app.use("/listening" , listeningRouter)
